@@ -1,0 +1,30 @@
+services:
+
+  app:
+    build:
+      context: app
+      target: builder
+    tty: true
+    volumes:
+      - ./app/:/app
+    env_file:
+      - .env
+    networks:
+      - supervision
+
+  rabbitmq:
+    image: rabbitmq:3.13
+    ports:
+      - "${RABBITMQ_COMPOSE_PORT}:5672"
+    volumes:
+      - "./volumes/rabbitmq:/var/lib/rabbitmq"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+      - RABBITMQ_NODENAME=${RABBITMQ_NODENAME}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST}
+    networks:
+      - supervision
+
+networks:
+  supervision: {}
