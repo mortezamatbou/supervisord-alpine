@@ -8,4 +8,4 @@ COPY supervisord.conf /etc/supervisor/supervisord.conf
 RUN pip install --upgrade pip
 RUN pip install pika supervisor
 
-# ENTRYPOINT [ "/usr/local/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf" ]
+ENTRYPOINT [ "supervisord" ]

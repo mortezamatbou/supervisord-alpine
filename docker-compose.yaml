@@ -2,6 +2,22 @@ version: "3"
 
 services:
 
+  app:
+    build:
+      context: app
+      target: builder
+    tty: true
+    volumes:
+      - ./app/:/app
+    env_file:
+      - .env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+        restart: true
+    networks:
+      - supervision
+
   rabbitmq:
     image: rabbitmq:3.13
     ports:
@@ -15,23 +31,12 @@ services:
       - RABBITMQ_VHOST=${RABBITMQ_VHOST}
     networks:
       - supervision
-
-
-  app:
-    build:
-      context: app
-      target: builder
-    tty: true
-    volumes:
-      - ./app/:/app
-    env_file:
-      - .env
-    depends_on:
-      rabbitmq:
-        condition: service_completed_successfully
-        restart: true
-    networks:
-      - supervision
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
 
 networks:
   supervision: {}
