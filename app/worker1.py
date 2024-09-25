@@ -16,14 +16,13 @@ def main():
 
     def callback(ch, method, properties, body):
         txt = body.decode()
-        f = open('./worker1.txt', 'a')
+        f = open('./logs/worker.log', 'a')
         d = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        f.write(f"{txt} {d}")
+        f.write(f"Worker1: {txt} {d}")
         f.write("\n")
         f.close()
-        print("Recived: " + txt + " " + d)
+        # print(f"Received: {txt} {d}")
         ch.basic_ack(delivery_tag=method.delivery_tag)
-        # ch.basic_nack(delivery_tag=method.delivery_tag)
 
 
     channel.basic_qos(prefetch_count=1)

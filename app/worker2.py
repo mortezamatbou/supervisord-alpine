@@ -1,5 +1,6 @@
 import os
 import pika
+from datetime import datetime
 
 rabbit_username = os.environ.get('RABBITMQ_USER')
 rabbit_password = os.environ.get('RABBITMQ_PASSWORD')
@@ -14,9 +15,14 @@ def main():
     channel.queue_declare(queue="test", durable=True)
 
     def callback(ch, method, properties, body):
-        print(f"Received : {body.decode()}")
+        txt = body.decode()
+        f = open('./logs/worker.log', 'a')
+        d = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        f.write(f"Worker2: {txt} {d}")
+        f.write("\n")
+        f.close()
+        # print(f"Received: {txt} {d}")
         ch.basic_ack(delivery_tag=method.delivery_tag)
-        # ch.basic_nack(delivery_tag=method.delivery_tag)
 
 
     channel.basic_qos(prefetch_count=1)
