@@ -1,0 +1,3 @@
+#!/bin/sh
+
+echo "from 5min. `date`" >> /app/logs/5min.log
